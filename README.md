@@ -79,3 +79,8 @@ event MyEvent(uint256 nonIndexedValue, string nonIndexedString);
 1. You need to store additional data in the event log that is not important for filtering or querying.
 2. You want to store complex data structures, such as structs or arrays, in the event log.
 3. You need to store data that is not relevant to the filtering or querying of the event.
+
+- [`events and logging in hardhat`](https://github.com/PatrickAlphaC/hardhat-events-logs)
+- [`events and logging video`](https://www.youtube.com/watch?v=KDYJC85eS5M)
+
+## Events in Raffle.sol

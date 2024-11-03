@@ -15,6 +15,9 @@ contract Raffle {
 
     // keep track of the players enter the raffle
     address payable[] private s_players; // when a player wins, we want to pay them so we make it payable
+    
+    /** Events **/
+    event RaffleEnter(address indexed player);
 
     constructor(uint256 entranceFee) {
         i_entranceFee = entranceFee;
@@ -26,8 +29,11 @@ contract Raffle {
         if (msg.value < i_entranceFee) {
             revert Raffle__NotEnoughEthEntered();
         }
-        
+
         s_players.push(payable(msg.sender)); // must be payable, because s_players is a payable array
+        
+        //Named events with the function name reversed
+        emit RaffleEnter(msg.sender);
     }
 
     function getEntranceFee() public view returns (uint256) {
