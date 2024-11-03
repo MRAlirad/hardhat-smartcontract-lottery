@@ -83,4 +83,8 @@ event MyEvent(uint256 nonIndexedValue, string nonIndexedString);
 - [`events and logging in hardhat`](https://github.com/PatrickAlphaC/hardhat-events-logs)
 - [`events and logging video`](https://www.youtube.com/watch?v=KDYJC85eS5M)
 
-## Events in Raffle.sol
+## Introduction to Chainlink VRF (Randomness in Web3)
+
+- [Chainlink VRFv2 Docs](https://docs.chain.link/docs/get-a-random-number/)
+- [Chainlink VRFv2 Walkthrough](https://www.youtube.com/watch?v=rdJ5d8j1RCg)
+- [Chainlink Contracts](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol)
