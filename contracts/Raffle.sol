@@ -33,7 +33,7 @@ contract Raffle {
     function getEntranceFee() public view returns (uint256) {
         return i_entranceFee;
     }
-    
+
     function getPlayer(uint256 index) public view returns (address) {
         retrn s_players[index];
     }
