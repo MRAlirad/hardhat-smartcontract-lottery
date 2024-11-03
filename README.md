@@ -88,3 +88,22 @@ event MyEvent(uint256 nonIndexedValue, string nonIndexedString);
 - [Chainlink VRFv2 Docs](https://docs.chain.link/docs/get-a-random-number/)
 - [Chainlink VRFv2 Walkthrough](https://www.youtube.com/watch?v=rdJ5d8j1RCg)
 - [Chainlink Contracts](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol)
+
+### Hardhat Shorthand
+
+Hardhat has a companion npm package that acts as a shorthand for `npx hardhat`, and at the same time, it enables command-line completions in your terminal.
+
+This package, `hardhat-shorthand`, installs a globally accessible binary called `hh` that runs your locally installed `hardhat`.
+
+```bash
+npm install --global hardhat-shorthand
+```
+
+so instead of `npx hardhat` || `yarn hardhat` we can use `hh`
+
+```bash
+hh compile
+hh test
+hh node
+hh deploy
+```
