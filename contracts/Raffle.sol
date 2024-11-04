@@ -12,6 +12,7 @@ import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
 /* Errors */
 error Raffle__NotEnoughEthEntered();
+error Raffle__TransferFailed();
 
 // inherited from VRFConsumerBaseV2
 contract Raffle is VRFConsumerBaseV2 {
@@ -20,21 +21,31 @@ contract Raffle is VRFConsumerBaseV2 {
     address payable[] private s_players; // keep track of the players enter the raffle - when a player wins, we want to pay them so we make it payable
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     bytes32 private immutable i_gasLane;
-    uint64 private immutable i_subscriptionId
+    uint64 private immutable i_subscriptionId;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
     uint32 private immutable i_callbackGasLimit;
     uint32 private constant NUM_WORDS = 1;
 
+    /** Lottery Variables **/
+    address private s_recentWinner;
+
     /** Events **/
     event RaffleEnter(address indexed player);
     event RequestedRaffleWinner(uint256 indexed requestId);
+    event WinnerPicked(address indexed winner);
 
-    constructor(address vrfCoordinatorV2, uint256 entranceFee, bytes32 gasLane, uint64 subscriptionId, uint32 callbackGasLimit) VRFConsumerBaseV2(vrfCoordinatorV2) {
+    constructor(
+        address vrfCoordinatorV2,
+        uint256 entranceFee,
+        bytes32 gasLane,
+        uint64 subscriptionId,
+        uint32 callbackGasLimit
+    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_entranceFee = entranceFee;
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
-        i_callbackGasLimit = callbackGasLimit
+        i_callbackGasLimit = callbackGasLimit;
     }
 
     //! Create Raffle Contract
@@ -49,11 +60,32 @@ contract Raffle is VRFConsumerBaseV2 {
         // once we get it, do something with it
 
         // 2 tranactions process
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(i_gasLane, i_subscriptionId, REQUEST_CONFIRMATIONS, i_callbackGasLimit, NUM_WORDS);
+        uint256 requestId = i_vrfCoordinator.requestRandomWords(
+            i_gasLane,
+            i_subscriptionId,
+            REQUEST_CONFIRMATIONS,
+            i_callbackGasLimit,
+            NUM_WORDS
+        );
         emit RequestedRaffleWinner(requestId);
     }
 
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {}
+    function fulfillRandomWords(
+        uint256 /* requestId */, // requestId is not needed
+        uint256[] memory randomWords
+    ) internal override {
+        // once we get the random number, we want to pick a random winner from our players array
+
+        // pick a random winner from sth called `modulo`
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        address payable recentWinner = s_players[indexOfWinner];
+        s_recentWinner = recentWinner;
+
+        // Send money
+        (bool success, ) = recentWinner.call{value: address(this).balance}("");
+        if (!success) revert Raffle__TransferFailed();
+        emit WinnerPicked(recentWinner);
+    }
 
     /** View / Pure functions **/
     function getEntranceFee() public view returns (uint256) {
@@ -62,5 +94,9 @@ contract Raffle is VRFConsumerBaseV2 {
 
     function getPlayer(uint256 index) public view returns (address) {
         return s_players[index];
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
     }
 }

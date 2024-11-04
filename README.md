@@ -135,3 +135,15 @@ i_vrfCoordinator.requestRandomWords(keyHash, s_subscriptionId, requestConfirmati
 - `requestConfirmations`  => uint16   => How many confirmations the Chainlink node should wait before responding. The longer the node waits, the more secure the random value is. It must be greater than the `minimumRequestBlockConfirmations` limit on the coordinator contract.
 - `callbackGasLimit`      => uint32   => The limit for how much gas to use for the callback request to your contract's `fulfillRandomWords()` function. It must be less than the `maxGasLimit` limit on the coordinator contract. Adjust this value for larger requests depending on how your `fulfillRandomWords()` function processes and stores the received random values. If your `callbackGasLimit` is not sufficient, the callback will fail and your subscription is still charged for the work done to generate your requested random values.
 - `numWords`              => uint32   => How many random values to request. If you can use several random values in a single callback, you can reduce the amount of gas that you spend per random value. The total cost of the callback request depends on how your `fulfillRandomWords()` function processes and stores the received random values, so adjust your `callbackGasLimit` accordingly.
+
+## Chainlink VRF - The FulFill
+
+### Modulo
+
+The [`modulo`](https://docs.soliditylang.org/en/latest/types.html#modulo) operation `a % n` yields the remainder `r` after the division of the operand `a` by the operand `n`, where `q = int(a / n)` and `r = a - (n * q)`. This means that modulo results in the same sign as its left operand (or zero) and `a % n == -(-a % n)` holds for negative `a`:
+
+- int256(5) % int256(2) == int256(1)
+- int256(5) % int256(-2) == int256(1)
+- int256(-5) % int256(2) == int256(-1)
+- int256(-5) % int256(-2) == int256(-1)
+
