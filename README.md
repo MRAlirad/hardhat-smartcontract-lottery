@@ -85,7 +85,7 @@ event MyEvent(uint256 nonIndexedValue, string nonIndexedString);
 
 ## Introduction to Chainlink VRF (Randomness in Web3)
 
-- [Chainlink VRFv2 Docs](https://docs.chain.link/docs/get-a-random-number/)
+- [Chainlink VRFv2 Docs](https://docs.chain.link/vrf/v2/subscription/examples/get-a-random-number)
 - [Chainlink VRFv2 Walkthrough](https://www.youtube.com/watch?v=rdJ5d8j1RCg)
 - [Chainlink Contracts](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol)
 
@@ -107,3 +107,31 @@ hh test
 hh node
 hh deploy
 ```
+
+## Chainlink VRF - The Request
+
+in order to get a random number from chainlink we need to create a request and use `requestRandomWords` method of [`VRFCoordinatorV2Interface`](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol) interface.
+
+so we need to import the `VRFCoordinatorV2Interface` interface and create a new instance of it.
+
+```sol
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+
+VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
+
+i_vrfCoordinator.requestRandomWords(keyHash, s_subscriptionId, requestConfirmations, callbackGasLimit, numWords);
+```
+
+### VRFCoordinatorV2Interface functions
+
+- `requestRandomWords()`	: Takes your specified parameters and submits the request to the VRF coordinator contract.
+- `fulfillRandomWords()`	: Receives random values and stores them with your contract. => returns a requestId
+- `getRequestStatus()`		: Retrive request details for a given _requestId.
+
+### requestRandomWords method parameters
+
+- `keyHash`               => bytes32  => The gas lane key hash value, which is the maximum gas price you are willing to pay for a request in wei. It functions as an ID of the offchain VRF job that runs in response to requests. we can also call it `gasLane`
+- `s_subscriptionId`      => uint64   => The subscription ID that this contract uses for funding requests.
+- `requestConfirmations`  => uint16   => How many confirmations the Chainlink node should wait before responding. The longer the node waits, the more secure the random value is. It must be greater than the `minimumRequestBlockConfirmations` limit on the coordinator contract.
+- `callbackGasLimit`      => uint32   => The limit for how much gas to use for the callback request to your contract's `fulfillRandomWords()` function. It must be less than the `maxGasLimit` limit on the coordinator contract. Adjust this value for larger requests depending on how your `fulfillRandomWords()` function processes and stores the received random values. If your `callbackGasLimit` is not sufficient, the callback will fail and your subscription is still charged for the work done to generate your requested random values.
+- `numWords`              => uint32   => How many random values to request. If you can use several random values in a single callback, you can reduce the amount of gas that you spend per random value. The total cost of the callback request depends on how your `fulfillRandomWords()` function processes and stores the received random values, so adjust your `callbackGasLimit` accordingly.
