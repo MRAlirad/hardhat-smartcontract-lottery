@@ -15,6 +15,7 @@ import "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatible
 error Raffle__NotEnoughEthEntered();
 error Raffle__RaffleNotOpen();
 error Raffle__TransferFailed();
+error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
 // inherited from VRFConsumerBaseV2
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
@@ -80,17 +81,26 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      * 3. The contract has ETH.
      * 4. Implicity, your subscription is funded with LINK.
      */
-    function checkUpkeep(bytes memory /* checkData */) external override returns (bool upkeepNeeded, bytes memory /* performData */) {
+    function checkUpkeep(
+        bytes memory /* checkData */
+    ) public override returns (bool upkeepNeeded, bytes memory /* performData */) {
         bool isOpen = (RaffleState.OPEN == s_raffleState);
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
         bool hasPlayers = (s_players.length > 0);
         bool hasBalance = address(this).balance > 0;
         upkeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance);
-        
+
         // if true, request a random number and end the lottory
     }
 
-    function requestRandomWinner() external {
+    function performUpkeep(bytes calldata /* performData */) external override {
+        (bool upkeepNeeded, ) = checkUpkeep("");
+        if (!upkeepNeeded)
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
         // change state to be calculating so noone can enter the raffle
         s_raffleState = RaffleState.CALCULATING;
 
@@ -121,6 +131,8 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         s_raffleState = RaffleState.OPEN; // change state to be open
 
         s_players = new address payable[](0); // reset the players array
+
+        s_lastTimeStamp = block.timestamp; // reset the timestamp
 
         // Send money
         (bool success, ) = recentWinner.call{value: address(this).balance}("");
