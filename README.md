@@ -13,7 +13,7 @@ yarn hardhat init
 
 - [`Custom Errors in Solidity`](https://soliditylang.org/blog/2021/04/21/custom-errors/)
 
-## Introduction to Events
+## Events
 
 whenever we update a dynamic object in solidity we can emit an event to notify the client.
 
@@ -83,7 +83,7 @@ event MyEvent(uint256 nonIndexedValue, string nonIndexedString);
 - [`events and logging in hardhat`](https://github.com/PatrickAlphaC/hardhat-events-logs)
 - [`events and logging video`](https://www.youtube.com/watch?v=KDYJC85eS5M)
 
-## Introduction to Chainlink VRF (Randomness in Web3)
+## Chainlink VRF (Randomness in Web3)
 
 - [Chainlink VRFv2 Docs](https://docs.chain.link/vrf/v2/subscription/examples/get-a-random-number)
 - [Chainlink VRFv2 Walkthrough](https://www.youtube.com/watch?v=rdJ5d8j1RCg)
@@ -108,7 +108,7 @@ hh node
 hh deploy
 ```
 
-## Chainlink VRF - The Request
+### Chainlink VRF - The Request
 
 in order to get a random number from chainlink we need to create a request and use `requestRandomWords` method of [`VRFCoordinatorV2Interface`](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol) interface.
 
@@ -136,9 +136,9 @@ i_vrfCoordinator.requestRandomWords(keyHash, s_subscriptionId, requestConfirmati
 - `callbackGasLimit`      => uint32   => The limit for how much gas to use for the callback request to your contract's `fulfillRandomWords()` function. It must be less than the `maxGasLimit` limit on the coordinator contract. Adjust this value for larger requests depending on how your `fulfillRandomWords()` function processes and stores the received random values. If your `callbackGasLimit` is not sufficient, the callback will fail and your subscription is still charged for the work done to generate your requested random values.
 - `numWords`              => uint32   => How many random values to request. If you can use several random values in a single callback, you can reduce the amount of gas that you spend per random value. The total cost of the callback request depends on how your `fulfillRandomWords()` function processes and stores the received random values, so adjust your `callbackGasLimit` accordingly.
 
-## Chainlink VRF - The FulFill
+### Chainlink VRF - The FulFill
 
-### Modulo
+#### Modulo
 
 The [`modulo`](https://docs.soliditylang.org/en/latest/types.html#modulo) operation `a % n` yields the remainder `r` after the division of the operand `a` by the operand `n`, where `q = int(a / n)` and `r = a - (n * q)`. This means that modulo results in the same sign as its left operand (or zero) and `a % n == -(-a % n)` holds for negative `a`:
 
@@ -147,3 +147,23 @@ The [`modulo`](https://docs.soliditylang.org/en/latest/types.html#modulo) operat
 - int256(-5) % int256(2) == int256(-1)
 - int256(-5) % int256(-2) == int256(-1)
 
+## Chainlink Keepers
+
+Automate your smart contracts using a secure and hyper-reliable decentralized network that uses the same external network of node operators that secures billions in value. Building on Chainlink Automation will accelerate your innovation, save you time and money, and help you get to market faster so you don't have to deal with the setup cost, ongoing maintenance, and risks associated with a centralized automation stack.
+
+- [`Chainlink Keepers Docs`](https://docs.chain.link/chainlink-automation)
+
+### Enum
+
+[`Enums`](https://docs.soliditylang.org/en/latest/structure-of-a-contract.html#enum-types) can be used to create custom types with a finite set of ‘constant values’ (see Enums in types section).
+
+```sol
+contract Purchase {
+    enum State { Created, Locked, Inactive } // Enum
+}
+```
+
+
+### block.timestamp
+
+block.timestamp is a global variable that represents the current timestamp of the block being mined.
