@@ -17,7 +17,14 @@ error Raffle__RaffleNotOpen();
 error Raffle__TransferFailed();
 error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
-// inherited from VRFConsumerBaseV2
+/**
+ * @title A sample Raffle Contract
+ * @author Mohammadreza Alirad
+ * @notice This contract is for creating a sample raffle contract
+ * @dev This implements the Chainlink VRF Version 2
+ */
+
+// inherited from VRFConsumerBaseV2 and AutomationCompatibleInterface
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     /**  Type Declarations **/
     enum RaffleState {
@@ -46,6 +53,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     event RequestedRaffleWinner(uint256 indexed requestId);
     event WinnerPicked(address indexed winner);
 
+    /** Functions **/
     constructor(
         address vrfCoordinatorV2,
         uint256 entranceFee,
@@ -151,5 +159,25 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getRecentWinner() public view returns (address) {
         return s_recentWinner;
+    }
+
+    function getRaffleState() public view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getNumWords() public pure returns (uint256) {
+        return NUM_WORDS;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLatestTimeStamp() public view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getRequestConfirmations() public pure returns (uint256) {
+        return REQUEST_CONFIRMATIONS;
     }
 }
