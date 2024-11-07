@@ -54,14 +54,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     event WinnerPicked(address indexed winner);
 
     /** Functions **/
-    constructor(
-        address vrfCoordinatorV2,
-        uint256 entranceFee,
-        bytes32 gasLane,
-        uint64 subscriptionId,
-        uint32 callbackGasLimit,
-        uint256 interval
-    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
+    constructor(address vrfCoordinatorV2, uint256 entranceFee, bytes32 gasLane, uint64 subscriptionId, uint32 callbackGasLimit, uint256 interval) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_entranceFee = entranceFee;
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
@@ -89,9 +82,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      * 3. The contract has ETH.
      * 4. Implicity, your subscription is funded with LINK.
      */
-    function checkUpkeep(
-        bytes memory /* checkData */
-    ) public override returns (bool upkeepNeeded, bytes memory /* performData */) {
+    function checkUpkeep(bytes memory /* checkData */) public override returns (bool upkeepNeeded, bytes memory /* performData */) {
         bool isOpen = (RaffleState.OPEN == s_raffleState);
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
         bool hasPlayers = (s_players.length > 0);
@@ -103,25 +94,14 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function performUpkeep(bytes calldata /* performData */) external override {
         (bool upkeepNeeded, ) = checkUpkeep("");
-        if (!upkeepNeeded)
-            revert Raffle__UpkeepNotNeeded(
-                address(this).balance,
-                s_players.length,
-                uint256(s_raffleState)
-            );
+        if (!upkeepNeeded) revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
         // change state to be calculating so noone can enter the raffle
         s_raffleState = RaffleState.CALCULATING;
 
         // request the random number
         // once we get it, do something with it
         // 2 tranactions process
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(
-            i_gasLane,
-            i_subscriptionId,
-            REQUEST_CONFIRMATIONS,
-            i_callbackGasLimit,
-            NUM_WORDS
-        );
+        uint256 requestId = i_vrfCoordinator.requestRandomWords(i_gasLane, i_subscriptionId, REQUEST_CONFIRMATIONS, i_callbackGasLimit, NUM_WORDS);
         emit RequestedRaffleWinner(requestId);
     }
 
@@ -179,5 +159,9 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getRequestConfirmations() public pure returns (uint256) {
         return REQUEST_CONFIRMATIONS;
+    }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
     }
 }

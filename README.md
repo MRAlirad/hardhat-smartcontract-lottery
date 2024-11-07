@@ -170,3 +170,13 @@ block.timestamp is a global variable that represents the current timestamp of th
 ## Chainlink Keepers - performUpkeep
 
 ## Deploy Raffle.sol
+
+- [`Link Token`](https://docs.chain.link/resources/link-token-contracts)
+
+## Raffle.sol Test
+
+- [`Emit Chai Matcher`](https://ethereum-waffle.readthedocs.io/en/latest/matchers.html#emitting-events)
+- [`Make Hardhat do whatever you want it to`](https://hardhat.org/hardhat-network/docs/reference)
+- [`Special debugging hardhat methods`](https://hardhat.org/hardhat-network/docs/reference#special-testing/debugging-methods)
+- [`Callstatic`](https://docs.ethers.org/v5/api/contract/contract/#contract-callStatic)
+
